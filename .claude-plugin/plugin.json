@@ -1,0 +1,9 @@
+{
+  "name": "litestar",
+  "description": "Litestar ASGI framework expert agent for writing, editing, and reviewing Litestar Python code",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sam Caldwell"
+  },
+  "agents": "./agents/"
+}
