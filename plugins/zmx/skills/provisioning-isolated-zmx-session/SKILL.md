@@ -30,9 +30,9 @@ Multiple subagents in a single plan share one session. Otherwise the spec review
 Check whether a branch/feature slug was passed as an argument (e.g., `add-cache-headers`).
 
 - **Argument provided:** branch name = `<slug>`, session name = `claude-<slug>`.
-- **No argument:** ask the user. Do not invent a slug. Same fallback policy as `using-git-worktrees`.
+- **No argument:** derive a slug from the plan/feature description in the orchestrator's current task context. Kebab-case it, strip filler words ("the", "a", "to", "for"), cap at ~40 characters. "Add cache headers to the API" → `add-cache-headers`. "Fix flaky auth tests" → `fix-flaky-auth-tests`. Only if there is genuinely no task description (skill invoked outside any feature work), fall back to `claude-sandbox-<8-char-random>`.
 
-Announce the resolved session name to the user before issuing any commands so they can `zmx attach <name>` from another terminal to watch.
+Announce the resolved session name to the user before issuing any commands so they can `zmx attach <name>` from another terminal to watch. Don't block on confirmation — just announce and proceed.
 
 ## Setup sequence
 
@@ -133,7 +133,7 @@ After the plan is complete and you've moved on to integration:
 
 1. (Optional) `zmx run <session> exit` — clean container shutdown.
 2. `zmx kill <session>` — container exits with the session.
-3. **Ask the user before removing the worktree.** They may want to inspect, merge, push, or keep it. Coordinate with `superpowers:finishing-a-development-branch` rather than reinventing.
+3. **Leave the worktree in place.** Worktree removal is `superpowers:finishing-a-development-branch`'s job — that skill handles the merge / push / discard decision properly. Don't ask, don't remove. Hand off.
 
 Never auto-cleanup mid-plan. Subagents may need to be re-dispatched (review found issues), and re-creating the environment loses container state (installed deps, build caches).
 
@@ -148,7 +148,7 @@ Never auto-cleanup mid-plan. Subagents may need to be re-dispatched (review foun
 | Sanity: mount | `zmx run <session> ls /workspace` |
 | Detect shell | `zmx run <session> echo $0` |
 | Dispatch subagent | Prepend "invoke `zmx:using-zmx` with session-name `<session>`" |
-| Tear down | `zmx kill <session>`, then ask about worktree |
+| Tear down | `zmx kill <session>`; leave worktree for `superpowers:finishing-a-development-branch` |
 
 ## Pitfalls
 
