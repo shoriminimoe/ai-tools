@@ -8,6 +8,11 @@
       "name": "litestar",
       "source": "./plugins/litestar",
       "description": "Litestar ASGI framework expert agent for writing, editing, and reviewing Litestar Python code"
+    },
+    {
+      "name": "zmx",
+      "source": "./plugins/zmx",
+      "description": "Skills for routing AI agent shell commands through zmx sessions (the AI portal pattern) so commands execute in remote, container, or sandboxed environments instead of locally"
     }
   ]
 }

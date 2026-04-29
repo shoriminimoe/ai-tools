@@ -1,0 +1,8 @@
+{
+  "name": "zmx",
+  "description": "Skills for routing AI agent shell commands through zmx sessions (the AI portal pattern) so commands execute in remote, container, or sandboxed environments instead of locally",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sam Caldwell"
+  }
+}
