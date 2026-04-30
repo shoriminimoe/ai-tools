@@ -30,12 +30,29 @@ When this skill is invoked, check whether a session name was passed as an argume
 
 Once resolved, use the same session for the rest of the conversation unless the user redirects.
 
+## Detect the session shell
+
+Before issuing any command whose exit status you'll inspect, detect the shell the session is running — the status variable name and the syntax for shell builtins differ:
+
+| Shell | Status variable | `zmx run` flag |
+|---|---|---|
+| bash / zsh / sh | `$?` | (none) |
+| fish | `$status` | `--fish` |
+
+Probe once after session resolution (zmx spawns `$SHELL`, so this is authoritative):
+
+```
+zmx run <session> echo shell=$SHELL
+```
+
+Cache the result for the rest of the conversation. If it ends in `fish`, pass `--fish` whenever the command uses shell builtins (`set`, `status`, etc.) and reference `$status` in any inline status check. Otherwise reference `$?`. Picking the wrong variable silently reads an unset name and you'll mis-report a failure as success.
+
 ## The execution loop
 
 For every command you would otherwise have run via Bash:
 
 1. `zmx run <session> <command>` — pass the command **unquoted**, exactly as you'd type it interactively.
-2. Read the returned output and exit code.
+2. Read the returned output and exit code. For inline status checks inside the command, use the variable matching the session shell (see above).
 3. Move to the next command. **Run sequentially** — do not parallelize `zmx run` calls against the same session.
 
 For file operations, if the session targets a remote or sandboxed environment:
